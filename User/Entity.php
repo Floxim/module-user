@@ -69,17 +69,11 @@ class Entity extends \Floxim\Main\Content\Entity
 
     protected function beforeSave()
     {
-        if ($this->isModified('password')) {
+        if ($this->isModified('password') && !empty($this['password'])) {
+            $this->setPayload('plain_password', $this['password']);
             $this['password'] = crypt($this['password'], uniqid(mt_rand(), true));
-        }
-        if ($this->isModified('email')) {
-            $existing = fx::data('user')
-                ->where('email', $this['email'])
-                ->where('id', $this['id'], '!=')
-                ->one();
-            if ($existing) {
-                throw new Exception("Ununique email");
-            }
+        } else {
+            $this->setNotModified('password');
         }
     }
 
@@ -147,13 +141,57 @@ class Entity extends \Floxim\Main\Content\Entity
         $fields[]= array(
             'name' => 'password',
             'type' => 'password',
-            'label' => $pass_field['label']
+            'label' => $pass_field['label'],
+            'tab' => 2
         );
         $fields[]= array(
             'name' => 'confirm_password',
             'type' => 'password',
-            'label' => fx::alang('Confirm').' '. $pass_field['label']
+            'label' => fx::alang('Confirm').' '. $pass_field['label'],
+            'tab' => 2
         );
         return $fields;
+    }
+    
+    public function can($action, $target) {
+        $method = 'can'.fx::util()->underscoreToCamel($action);
+        if (method_exists($this, $method)) {
+            return $this->$method($target);
+        }
+        if ($this->isAdmin()) {
+            return true;
+        }
+        return false;
+    }
+    
+    public function validate() {
+        if ($this->isModified('email')) {
+            $existing = fx::data('user')
+                ->where('email', $this['email'])
+                ->where('id', $this['id'], '!=')
+                ->one();
+            if ($existing) {
+                $this->invalid('This email is already used', 'email');
+            }
+        }
+        
+        if ($this->isModified('password')) {
+            
+            $password = $this->getPayload('plain_password');
+            if (is_null($password)) {
+                $password = $this['password'];
+            }
+            if (!empty($password)) {
+                $confirm = $this->getPayload('confirm_password');
+                if (!is_null($confirm) && $confirm !== $password) {
+                    $this->invalid(
+                        'Passwords do not match',
+                        'confirm_password'
+                    );
+                }
+            }
+        }
+        $pres = parent::validate();
+        return $pres;
     }
 }

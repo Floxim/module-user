@@ -29,12 +29,26 @@ class Controller extends \Floxim\Main\Content\Controller
                 if ($location === '/floxim/') {
                     $location = '/';
                 }
+                switch ($this->getParam('redirect_location_type')) {
+                    case 'refresh': default:
+                        $target_location = $location;
+                        break;
+                    case 'home':
+                        $target_location = '/';
+                        break;
+                    case 'custom':
+                        $target_location = $this->getParam('redirect_location_custom');
+                        if (empty($target_location)) {
+                            $target_location = '/';
+                        }
+                        break;
+                }
                 // send admin to cross-auth page
                 if ($user->isAdmin()) {
-                    fx::input()->setCookie('fx_target_location', $location);
+                    fx::input()->setCookie('fx_target_location', $target_location);
                     fx::http()->redirect('/~ajax/user:crossite_auth_form');
                 }
-                fx::http()->redirect($location);
+                fx::http()->redirect($target_location);
             }
         }
 
@@ -63,6 +77,8 @@ class Controller extends \Floxim\Main\Content\Controller
         }
         fx::env('ajax', false);
         $target_location = fx::input()->fetchCookie('fx_target_location');
+        // unset cookie
+        fx::input()->setCookie('fx_target_location', '', 1);
         if (!$target_location) {
             $target_location = '/';
         }

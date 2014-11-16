@@ -7,8 +7,10 @@
 </div>
 
 <div fx:template="greet" fx:of="user:greet" class="fx_user_greet">
-    {%hello}Hello, {/%} 
-    <a class="fx_profile_link" href="{$profile_url}" fx:omit="!$profile_url">{$user.name}</a>
+    <span class="fx_user_greet_hello">{%hello}Hello, {/%}</span> 
+    <a class="fx_profile_link" href="{$profile_url}" fx:omit="!$profile_url">
+        <span class="fx_user_greet_user_name">{$user.name}</span>
+    </a>
     <a class="fx_logout_link" href="{$logout_url}">{%logout}Log out{/%}</a>
 </div>
 
