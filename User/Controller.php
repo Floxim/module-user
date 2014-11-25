@@ -9,10 +9,8 @@ class Controller extends \Floxim\Main\Content\Controller
     {
         $user = fx::user();
 
-
         if (!$user->isGuest()) {
             if (!fx::isAdmin()) {
-                fx::debug('nadm', $user);
                 return false;
             }
             $this->_meta['hidden'] = true;
