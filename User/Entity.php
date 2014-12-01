@@ -161,7 +161,8 @@ class Entity extends \Floxim\Main\Content\Entity
         if ($this->isAdmin()) {
             return true;
         }
-        return false;
+        $event_res = fx::trigger('checkAbility', array('user' => $this, 'action' => $action, 'target' => $target));
+        return $event_res;
     }
     
     public function validate() {
