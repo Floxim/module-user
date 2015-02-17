@@ -13,7 +13,7 @@ class Controller extends \Floxim\Main\Content\Controller
             if (!fx::isAdmin()) {
                 return false;
             }
-            $this->_meta['hidden'] = true;
+            //$this->_meta['hidden'] = true;
         }
 
         $form = $user->getAuthForm();
@@ -44,7 +44,7 @@ class Controller extends \Floxim\Main\Content\Controller
                 // send admin to cross-auth page
                 if ($user->isAdmin()) {
                     fx::input()->setCookie('fx_target_location', $target_location);
-                    fx::http()->redirect('/~ajax/user:crossite_auth_form');
+                    fx::http()->redirect('/~ajax/user:cross_site_auth_form');
                 }
                 fx::http()->redirect($target_location);
             }
@@ -58,8 +58,11 @@ class Controller extends \Floxim\Main\Content\Controller
     /**
      * Show form to authorize user on all sites
      */
-    public function doCrossiteAuthForm()
+    public function doCrossSiteAuthForm()
     {
+        if (!preg_match("~/\~ajax~", $_SERVER['REQUEST_URI'])) {
+            return false;
+        }
         if (!fx::user()->isAdmin()) {
             fx::http()->redirect('/');
         }
@@ -85,13 +88,13 @@ class Controller extends \Floxim\Main\Content\Controller
         }
         return array(
             'hosts'           => $hosts,
-            'auth_url'        => '/~ajax/user:crossite_auth',
+            'auth_url'        => '/~ajax/user:cross_site_auth',
             'target_location' => $target_location,
             'session_key'     => fx::data('session')->load()->get('session_key')
         );
     }
 
-    public function doCrossiteAuth()
+    public function doCrossSiteAuth()
     {
         if (isset($_POST['email']) && isset($_POST['password'])) {
             fx::user()->login($_POST['email'], $_POST['password']);

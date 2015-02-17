@@ -18,6 +18,9 @@ return array(
                     'parent' => array( 'redirect_location_type' => 'custom' )
                 )
             )
+        ),
+        '*cross_site*' => array(
+            //'disabled' => true
         )
     )
 );
