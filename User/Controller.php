@@ -163,4 +163,20 @@ class Controller extends \Floxim\Main\Content\Controller
         $back_url = $this->getParam('back_url', '/');
         fx::http()->redirect($back_url);
     }
+    
+    public function doFormCreate() {
+        $this->onFormReady(function($e) {
+            unset($e['form']['fields']['is_published']);
+            unset($e['form']['fields']['avatar']);
+            unset($e['form']['fields']['is_admin']);
+            $e['form']['fields']['email']['required'] = true;
+            $e['form']['fields']['name']['required'] = true;
+        });
+        $this->onFormCompleted(function($e) {
+           $form = $e['form'];
+           $user = $e['entity'];
+           $user->login($form->email, $form->password, true);
+        });
+        parent::doFormCreate();
+    }
 }

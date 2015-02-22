@@ -69,6 +69,7 @@ class Entity extends \Floxim\Main\Content\Entity
 
     protected function beforeSave()
     {
+        parent::beforeSave();
         if ($this->isModified('password') && !empty($this['password'])) {
             $this->setPayload('plain_password', $this['password']);
             $this['password'] = crypt($this['password'], uniqid(mt_rand(), true));
@@ -156,13 +157,28 @@ class Entity extends \Floxim\Main\Content\Entity
     public function can($action, $target) {
         $method = 'can'.fx::util()->underscoreToCamel($action);
         if (method_exists($this, $method)) {
-            return $this->$method($target);
+            $res = $this->$method($target);
+            if (is_bool($res)) {
+                return $res;
+            }
         }
         if ($this->isAdmin()) {
             return true;
         }
         $event_res = fx::trigger('checkAbility', array('user' => $this, 'action' => $action, 'target' => $target));
         return $event_res;
+    }
+    
+    public function canSeeCreateForm($entity) {
+        if ($this->isGuest() && $entity->isInstanceOf('floxim.user.user')) {
+            return true;
+        }
+    }
+    
+    public function canCreate($entity) {
+        if ($this->isGuest() && $entity->isInstanceOf('floxim.user.user')) {
+            return true;
+        }
     }
     
     public function validate() {
@@ -190,6 +206,11 @@ class Entity extends \Floxim\Main\Content\Entity
                         'confirm_password'
                     );
                 }
+            } elseif (!$this['id']) {
+                $this->invalid(
+                    'Passwords can not be empty',
+                    'password'
+                );
             }
         }
         $pres = parent::validate();
