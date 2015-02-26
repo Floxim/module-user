@@ -177,6 +177,6 @@ class Controller extends \Floxim\Main\Content\Controller
            $user = $e['entity'];
            $user->login($form->email, $form->password, true);
         });
-        parent::doFormCreate();
+        return parent::doFormCreate();
     }
 }
