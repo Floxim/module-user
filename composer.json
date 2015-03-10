@@ -1,0 +1,5 @@
+{
+  "name" : "floxim/module-user",
+  "description" : "Floxim user module.",
+  "type" : "floxim-module"
+}
