@@ -21,6 +21,14 @@ return array(
         ),
         '*cross_site*' => array(
             //'disabled' => true
+        ),
+        '*form_create*' => array(
+            'settings' => array(
+                'force_login' => array(
+                    'type' => 'checkbox',
+                    'label' => fx::alang('Login after registration')
+                )
+            )
         )
     )
 );

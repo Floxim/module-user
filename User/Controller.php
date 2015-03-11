@@ -172,11 +172,13 @@ class Controller extends \Floxim\Main\Content\Controller
             $e['form']['fields']['email']['required'] = true;
             $e['form']['fields']['name']['required'] = true;
         });
-        $this->onFormCompleted(function($e) {
-           $form = $e['form'];
-           $user = $e['entity'];
-           $user->login($form->email, $form->password, true);
-        });
+        if ($this->getParam('force_login') && fx::user()->isGuest()) {
+            $this->onFormCompleted(function($e) {
+               $form = $e['form'];
+               $user = $e['entity'];
+               $user->login($form->email, $form->password, true);
+            });
+        }
         parent::doFormCreate();
     }
 }
