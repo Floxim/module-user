@@ -188,7 +188,10 @@ class Entity extends \Floxim\Main\Content\Entity
                 ->where('id', $this['id'], '!=')
                 ->one();
             if ($existing) {
-                $this->invalid('This email is already used', 'email');
+                $this->invalid(
+                    fx::alang('This email is already used', 'system'), 
+                    'email'
+                );
             }
         }
         
@@ -202,7 +205,7 @@ class Entity extends \Floxim\Main\Content\Entity
                 $confirm = $this->getPayload('confirm_password');
                 if (!is_null($confirm) && $confirm !== $password) {
                     $this->invalid(
-                        'Passwords do not match',
+                        fx::alang('Passwords do not match', 'system'),
                         'confirm_password'
                     );
                 }

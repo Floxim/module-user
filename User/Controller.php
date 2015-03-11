@@ -179,6 +179,6 @@ class Controller extends \Floxim\Main\Content\Controller
                $user->login($form->email, $form->password, true);
             });
         }
-        parent::doFormCreate();
+        return parent::doFormCreate();
     }
 }
