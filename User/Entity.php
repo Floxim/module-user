@@ -93,15 +93,15 @@ class Entity extends \Floxim\Main\Content\Entity
             ),
             'password' => array(
                 'type'  => 'password',
-                'label' => 'Password'
+                'label' => fx::lang('Password')
             ),
             'remember' => array(
                 'type'  => 'checkbox',
-                'label' => 'Remember me'
+                'label' => fx::lang('Remember me')
             ),
             'submit'   => array(
                 'type'  => 'submit',
-                'label' => 'Log in'
+                'label' => fx::lang('Log in')
             )
         ));
         return $form;

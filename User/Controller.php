@@ -131,7 +131,7 @@ class Controller extends \Floxim\Main\Content\Controller
             ),
             'submit' => array(
                 'type'  => 'submit',
-                'label' => 'Send me new password'
+                'label' => fx::lang('Send me new password')
             )
         ));
         if ($form->isSent() && !$form->hasErrors()) {
