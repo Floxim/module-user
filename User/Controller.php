@@ -152,7 +152,6 @@ class Controller extends \Floxim\Main\Content\Controller
                     ->data('site', fx::env('site'))
                     ->template('user.password_recover')
                     ->send();
-                fx::log($res, $mailer);
             }
         }
         return array('form' => $form);
