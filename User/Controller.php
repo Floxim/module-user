@@ -144,13 +144,15 @@ class Controller extends \Floxim\Main\Content\Controller
                 $user->save();
                 fx::data('session')->where('user_id', $user['id'])->delete();
                 $form->addMessage('New password is sent to ' . $form->email);
-                fx::mail()
+                $mailer = fx::mail();
+                $res = $mailer
                     ->to($form->email)
                     ->data('user', $user)
                     ->data('password', $password)
                     ->data('site', fx::env('site'))
                     ->template('user.password_recover')
                     ->send();
+                fx::log($res, $mailer);
             }
         }
         return array('form' => $form);
