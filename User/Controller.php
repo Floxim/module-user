@@ -143,7 +143,6 @@ class Controller extends \Floxim\Main\Content\Controller
                 $user['password'] = $password;
                 $user->save();
                 fx::data('session')->where('user_id', $user['id'])->delete();
-                $form->addMessage('New password is sent to ' . $form->email);
                 $mailer = fx::mail();
                 $res = $mailer
                     ->to($form->email)
@@ -152,6 +151,9 @@ class Controller extends \Floxim\Main\Content\Controller
                     ->data('site', fx::env('site'))
                     ->template('user.password_recover')
                     ->send();
+                if ($res) {
+                    $form->addMessage('New password is sent to ' . $form->email);
+                }
             }
         }
         return array('form' => $form);
