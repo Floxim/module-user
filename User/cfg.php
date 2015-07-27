@@ -2,9 +2,10 @@
 return array(
     'actions' => array(
         '*auth_form' => array(
+            'name' => fx::alang('Login form', 'floxim.main.user'),
             'settings' => array(
                 'redirect_location_type' => array(
-                    'label' => fx::alang('After login'),
+                    'label' => fx::alang('After login', 'floxim.main.user'),
                     'type' => 'select',
                     'values' => array(
                         array('refresh', fx::alang('Refresh current page')),
@@ -20,9 +21,16 @@ return array(
             )
         ),
         '*cross_site*' => array(
-            //'disabled' => true
+            'disabled' => true
+        ),
+        '*greet' => array(
+            'name' => fx::alang('Greet and logout widget', 'floxim.main.user')
+        ),
+        '*recover_form' => array(
+            'name' => fx::alang('Recover password form', 'floxim.main.user')
         ),
         '*form_create*' => array(
+            'name' => fx::alang('Registration form', 'floxim.main.user'),
             'settings' => array(
                 'force_login' => array(
                     'type' => 'checkbox',
