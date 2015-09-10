@@ -142,14 +142,12 @@ class Entity extends \Floxim\Main\Content\Entity
         $fields[]= array(
             'name' => 'password',
             'type' => 'password',
-            'label' => $pass_field['label'],
-            'tab' => 2
+            'label' => $pass_field['label']
         );
         $fields[]= array(
             'name' => 'confirm_password',
             'type' => 'password',
-            'label' => fx::alang('Confirm').' '. $pass_field['label'],
-            'tab' => 2
+            'label' => fx::alang('Confirm').' '. $pass_field['label']
         );
         return $fields;
     }
