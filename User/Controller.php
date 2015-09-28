@@ -17,6 +17,8 @@ class Controller extends \Floxim\Main\Content\Controller
         }
 
         $form = $user->getAuthForm();
+        
+        $this->trigger('form_ready', array('form' => $form));
 
         if ($form->isSent() && !$form->hasErrors()) {
             $vals = $form->getValues();
