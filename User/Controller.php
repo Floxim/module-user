@@ -164,7 +164,7 @@ class Controller extends \Floxim\Main\Content\Controller
         $user = fx::user();
         $user->logout();
         $back_url = $this->getParam('back_url', '/');
-        fx::http()->redirect($back_url);
+        fx::http()->redirect($back_url, 302);
     }
     
     public function doFormCreate() {
