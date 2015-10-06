@@ -23,7 +23,7 @@ class Controller extends \Floxim\Main\Content\Controller
         if ($form->isSent() && !$form->hasErrors()) {
             $vals = $form->getValues();
             if (!$user->login($vals['email'], $vals['password'], $vals['remember'])) {
-                $form->addError('User not found or password is wrong', 'email');
+                $form->addError( fx::lang('User not found or password is wrong'), 'email');
             } else {
                 $location = $_SERVER['REQUEST_URI'];
                 if ($location === '/floxim/') {
