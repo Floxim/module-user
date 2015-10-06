@@ -47,7 +47,15 @@ class Entity extends \Floxim\Main\Content\Entity
 
     public function logout()
     {
-        fx::data('session')->stop();
+        $session = fx::data('session');
+        fx::trigger(
+            'before_logout', 
+            array(
+                'user' => $this,
+                'session' => $session
+            )
+        );
+        $session->stop();
     }
 
     public function isAdmin()
