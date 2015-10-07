@@ -16,14 +16,18 @@ class Controller extends \Floxim\Main\Content\Controller
             //$this->_meta['hidden'] = true;
         }
 
+        
         $form = $user->getAuthForm();
+        if ($this->getParam('ajax')) {
+            $this->ajaxForm($form);
+        }
         
         $this->trigger('form_ready', array('form' => $form));
 
         if ($form->isSent() && !$form->hasErrors()) {
             $vals = $form->getValues();
             if (!$user->login($vals['email'], $vals['password'], $vals['remember'])) {
-                $form->addError( fx::lang('User not found or password is wrong'), 'email');
+                $form->addError( fx::lang('User not found or password is wrong'), 'password');
             } else {
                 $location = $_SERVER['REQUEST_URI'];
                 if ($location === '/floxim/') {

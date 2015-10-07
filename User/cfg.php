@@ -13,6 +13,11 @@ return array(
                         array('custom', fx::alang('Redirect to custom URL...'))
                     )
                 ),
+                'ajax' => array(
+                    'type' => 'checkbox',
+                    'label' => fx::alang('Use AJAX'),
+                    'value' => 1
+                ),
                 'redirect_location_custom' => array(
                     'label' => fx::alang('Target URL'),
                     'type' => 'string',
