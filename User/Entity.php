@@ -41,7 +41,7 @@ class Entity extends \Floxim\Main\Content\Entity
 
     public function getLogoutUrl()
     {
-        return '/~ajax/user:logout/';
+        return fx::path()->http('@home/~ajax/user:logout/');
     }
 
 
