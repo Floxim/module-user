@@ -20,7 +20,7 @@
     fx:of="user:cross_site_auth_form"
     data-target_location="{$target_location}">
         <script type="text/javascript" src="<?= FX_JQUERY_PATH_HTTP ?>"></script>
-        <script type="text/javascript" src="<?= $template_dir ?>cross_site_auth.js"></script>
+        <script type="text/javascript" src="/<?= $template_dir ?>cross_site_auth.js"></script>
         <style type="text/css">
             .cross_site_auth_form {
                 opacity:0.1;
