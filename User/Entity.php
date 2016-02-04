@@ -12,11 +12,11 @@ class Entity extends \Floxim\Main\Content\Entity
         $user = null;
         if ($session && $session['user_id']) {
             $session->setCookie();
-            $user = fx::data('user', $session['user_id']);
+            $user = fx::data('floxim.user.user', $session['user_id']);
         }
 
         if (!$user) {
-            $user = fx::data('user')->create();
+            $user = fx::data('floxim.user.user')->create();
         }
 
         fx::env()->setUser($user);
@@ -25,7 +25,7 @@ class Entity extends \Floxim\Main\Content\Entity
 
     public function login($login, $password, $remember = true)
     {
-        $user = fx::data('user')->getByLogin($login);
+        $user = fx::data('floxim.user.user')->getByLogin($login);
         if (!$user || !$user['password'] || crypt($password, $user['password']) !== $user['password']) {
             return false;
         }
@@ -189,7 +189,7 @@ class Entity extends \Floxim\Main\Content\Entity
     
     public function validate() {
         if ($this->isModified('email')) {
-            $existing = fx::data('user')
+            $existing = fx::data('floxim.user.user')
                 ->where('email', $this['email'])
                 ->where('id', $this['id'], '!=')
                 ->one();
