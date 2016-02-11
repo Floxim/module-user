@@ -50,7 +50,7 @@ class Controller extends \Floxim\Main\Content\Controller
                 // send admin to cross-auth page
                 if ($user->isAdmin()) {
                     fx::input()->setCookie('fx_target_location', $target_location);
-                    fx::http()->redirect('@home/~ajax/floxim.user.user:cross_site_auth_form');
+                    fx::http()->redirect( '@home/~ajax/floxim.user.user:cross_site_auth_form');
                 }
                 fx::http()->redirect($target_location);
             }
@@ -94,7 +94,7 @@ class Controller extends \Floxim\Main\Content\Controller
         }
         return array(
             'hosts'           => $hosts,
-            'auth_url'        => '@home/~ajax/floxim.user.user:cross_site_auth',
+            'auth_url'        => fx::path()->http('@home/~ajax/floxim.user.user:cross_site_auth'),
             'target_location' => $target_location,
             'session_key'     => fx::data('session')->load()->get('session_key')
         );
@@ -108,7 +108,7 @@ class Controller extends \Floxim\Main\Content\Controller
             $session = fx::data('session')->getByKey($_POST['session_key']);
             if ($session) {
                 $session->setCookie();
-                $user = fx::data('user', $session['user_id']);
+                $user = fx::data('floxim.user.user', $session['user_id']);
                 return "Hello, " . $user['name'] . '!<br /> ' . fx::env('host') . ' is glad to see you!';
             }
         }
@@ -141,7 +141,7 @@ class Controller extends \Floxim\Main\Content\Controller
             )
         ));
         if ($form->isSent() && !$form->hasErrors()) {
-            $user = fx::data('user')->getByLogin($form->email);
+            $user = fx::data('floxim.user.user')->getByLogin($form->email);
             if (!$user) {
                 $form->addError(fx::lang('User not found'), 'email');
             } else {
@@ -152,7 +152,7 @@ class Controller extends \Floxim\Main\Content\Controller
                 $mailer = fx::mail();
                 $res = $mailer
                     ->to($form->email)
-                    ->data('user', $user)
+                    ->data('floxim.user.user', $user)
                     ->data('password', $password)
                     ->data('site', fx::env('site'))
                     ->template('user.password_recover')
