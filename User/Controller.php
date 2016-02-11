@@ -50,7 +50,7 @@ class Controller extends \Floxim\Main\Content\Controller
                 // send admin to cross-auth page
                 if ($user->isAdmin()) {
                     fx::input()->setCookie('fx_target_location', $target_location);
-                    fx::http()->redirect('@home/~ajax/user:cross_site_auth_form');
+                    fx::http()->redirect('@home/~ajax/floxim.user.user:cross_site_auth_form');
                 }
                 fx::http()->redirect($target_location);
             }
@@ -94,7 +94,7 @@ class Controller extends \Floxim\Main\Content\Controller
         }
         return array(
             'hosts'           => $hosts,
-            'auth_url'        => '@home/~ajax/user:cross_site_auth',
+            'auth_url'        => '@home/~ajax/floxim.user.user:cross_site_auth',
             'target_location' => $target_location,
             'session_key'     => fx::data('session')->load()->get('session_key')
         );
