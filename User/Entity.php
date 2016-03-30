@@ -36,6 +36,7 @@ class Entity extends \Floxim\Main\Content\Entity
             $this->data[$f] = $v;
         }
         $this->createSession($remember);
+        fx::env()->set('user', $this);
         return true;
     }
 
