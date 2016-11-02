@@ -37,3 +37,15 @@
                 <input type="submit" />
         </form>
 </div>
+                
+<div fx:template="popup" fx:of="auth_form">
+    <div class="fx_user_greet not-for-modal">
+        {set $login_item}<span class="login">{%login}Войти{/%}</span>{/set}
+        {apply floxim.ui.menu:menu with $items = array(
+            array( 'name' => $login_item )
+        ) /}
+    </div>
+    <div class="for-modal login_form" style="display:none;">
+        {apply floxim.form.form:form with $form /}
+    </div>
+</div>
