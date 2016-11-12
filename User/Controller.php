@@ -55,7 +55,7 @@ class Controller extends \Floxim\Main\Content\Controller
                 fx::http()->redirect($target_location);
             }
         }
-
+        
         return array(
             'form' => $form
         );
@@ -128,7 +128,8 @@ class Controller extends \Floxim\Main\Content\Controller
 
     public function doRecoverForm()
     {
-        $form = new \Floxim\Form\Form();
+        //$form = new \Floxim\Form\Form();
+        $form = fx::data('floxim.form.form')->generate();
         $form->addFields(array(
             'email'  => array(
                 'label'      => 'E-mail',

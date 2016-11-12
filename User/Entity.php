@@ -94,7 +94,8 @@ class Entity extends \Floxim\Main\Content\Entity
 
     public function getAuthForm()
     {
-        $form = new \Floxim\Form\Form(array('id' => 'auth_form'));
+        //$form = new \Floxim\Form\Form(array('id' => 'auth_form'));
+        $form = fx::data('floxim.form.form')->create();
         $form->addFields(array(
             'email'    => array(
                 'label'      => 'E-mail',
