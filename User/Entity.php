@@ -22,6 +22,11 @@ class Entity extends \Floxim\Main\Content\Entity
         fx::env()->setUser($user);
         return $user;
     }
+    
+    public function getSession()
+    {
+        return fx::data('session')->load();
+    }
 
     public function login($login, $password, $remember = true)
     {
@@ -64,13 +69,14 @@ class Entity extends \Floxim\Main\Content\Entity
         return (bool)$this['is_admin'];
     }
 
-    public function createSession($remember = 0)
+    public function createSession($remember = 0, $params = array())
     {
         $session = fx::data('session')->start(array(
             'user_id'  => $this['id'],
             // admins have one cross-site session
             'site_id'  => $this->isAdmin() ? null : fx::env('site_id'),
-            'remember' => $remember
+            'remember' => $remember,
+            'params' => $params
         ));
         return $session;
     }
