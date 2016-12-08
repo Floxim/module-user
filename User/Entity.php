@@ -31,6 +31,7 @@ class Entity extends \Floxim\Main\Content\Entity
     public function login($login, $password, $remember = true)
     {
         $user = fx::data('floxim.user.user')->getByLogin($login);
+        
         if (!$user || !$user['password'] || crypt($password, $user['password']) !== $user['password']) {
             return false;
         }
@@ -102,6 +103,7 @@ class Entity extends \Floxim\Main\Content\Entity
     {
         //$form = new \Floxim\Form\Form(array('id' => 'auth_form'));
         $form = fx::data('floxim.form.form')->create();
+        $form['id'] = 'auth_form';
         $form->addFields(array(
             'email'    => array(
                 'label'      => 'E-mail',

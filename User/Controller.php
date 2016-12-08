@@ -23,7 +23,7 @@ class Controller extends \Floxim\Main\Content\Controller
         }
         
         $this->trigger('form_ready', array('form' => $form));
-
+        
         if ($form->isSent() && !$form->hasErrors()) {
             $vals = $form->getValues();
             if (!$user->login($vals['email'], $vals['password'], $vals['remember'])) {
