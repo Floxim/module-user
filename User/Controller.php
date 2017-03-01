@@ -24,6 +24,13 @@ class Controller extends \Floxim\Main\Content\Controller
         
         $this->trigger('form_ready', array('form' => $form));
         
+        $recover_url = self::getFullRecoverUrl();
+        if ($recover_url) {
+            $form->addMessage(
+                '<p>Если вы забыли пароль, его можно <a href="'.$recover_url.'">восстановить</a>!</p>'
+            );
+        }
+        
         if ($form->isSent() && !$form->hasErrors()) {
             $vals = $form->getValues();
             if (!$user->login($vals['email'], $vals['password'], $vals['remember'])) {
@@ -59,6 +66,16 @@ class Controller extends \Floxim\Main\Content\Controller
         return array(
             'form' => $form
         );
+    }
+    
+    protected static function getFullRecoverUrl()
+    {
+        $recover_url = fx::config('user.recover_url');
+        if (!$recover_url) {
+            return false;
+        }
+        $recover_url = 'http://'.$_SERVER['HTTP_HOST'].$recover_url;
+        return $recover_url;
     }
 
     /**
@@ -128,8 +145,53 @@ class Controller extends \Floxim\Main\Content\Controller
 
     public function doRecoverForm()
     {
+        if (isset($_GET['recover_token'])) {
+            $token = fx::data('floxim.user.recover_token')->where('token', $_GET['recover_token'])->one();
+            
+            if ($token && $token['user']) {
+                $form = fx::data('floxim.form.form')->generate();
+                $form = $this->ajaxForm($form);
+                $form->addFields(array(
+                    'password'  => array(
+                        'label'      => 'Пароль',
+                        'type'      => 'password'
+                    ),
+                    'password_repeat'  => array(
+                        'label'      => 'Подтверждение пароля',
+                        'type'      => 'password'
+                    ),
+                    'submit' => array(
+                        'type'  => 'submit',
+                        'label' => 'Установить пароль'
+                    )
+                ));
+                if ($form->isSent()) {
+                    if (!$form->password) {
+                        $form->addError('Необходимо задать пароль');
+                    } elseif ($form->password !== $form->password_repeat) {
+                        $form->addError('Введенные пароли не совпадают');
+                    }
+                    if (!$form->hasErrors()) {
+                        $user = $token['user'];
+                        $user['password'] = $form->password;
+                        $user->save();
+                        fx::user()->login($user['email'], $form->password, true);
+                        $token->delete();
+                        $form->finish(
+                            '<p>Пароль успешно изменен!</p>'.
+                            '<script type="text/javascript">setTimeout(function() {'
+                                . 'document.location.href = "/"'.
+                            '}, 3000);</script>'
+                        );
+                    }
+                }
+                $this->assign('form', $form);
+                return;
+            }
+        }
         //$form = new \Floxim\Form\Form();
         $form = fx::data('floxim.form.form')->generate();
+        $form = $this->ajaxForm($form);
         $form->addFields(array(
             'email'  => array(
                 'label'      => 'E-mail',
@@ -138,29 +200,47 @@ class Controller extends \Floxim\Main\Content\Controller
             ),
             'submit' => array(
                 'type'  => 'submit',
-                'label' => fx::lang('Send me new password')
+                'label' => 'Готово'
             )
         ));
-        if ($form->isSent() && !$form->hasErrors()) {
+        $form->addMessage(
+            '<p>Введите адрес электронной почты, с которым вы регистрировались, '.
+                'и мы вышлем на него ссылку для установки нового пароля!</p>',
+            'before'
+        );
+        if ($form->isSent()) {
+            
             $user = fx::data('floxim.user.user')->getByLogin($form->email);
             if (!$user) {
-                $form->addError(fx::lang('User not found'), 'email');
+                $form->addError('Пользователь не найден');
             } else {
-                $password = $user->generatePassword();
-                $user['password'] = $password;
-                $user->save();
-                fx::data('session')->where('user_id', $user['id'])->delete();
+                $token = fx::data('floxim.user.recover_token')->create([
+                    'token' => fx::util()->uid(),
+                    'token_user_id' => $user['id'],
+                    'expire_date' => time() + 60*60*24 // 1 day
+                ]);
+                $token->save();
+                $form->finish(
+                    '<p>Письмо со ссылкой для смены пароля отправлено на адрес '
+                        .$user['email'].'</p>'
+                );
                 $mailer = fx::mail();
-                $res = $mailer
-                    ->to($form->email)
-                    ->data('floxim.user.user', $user)
-                    ->data('password', $password)
-                    ->data('site', fx::env('site'))
-                    ->template('user.password_recover')
-                    ->send();
-                if ($res) {
-                    $form->addMessage('New password is sent to ' . $form->email);
-                }
+                $from_addr = fx::config('mail.from_address');
+                $from_name = fx::config('mail.from_name');
+                $mailer->from($from_addr, $from_name);
+                $host = $_SERVER['HTTP_HOST'];
+                //$link = 'http://'.$host.$_SERVER['REQUEST_URI'].'?recover_token='.$token['token'];
+                $link = self::getFullRecoverUrl().'?recover_token='.$token['token'];
+                $mailer->to($form->email)
+                       ->subject($_SERVER['HTTP_HOST'].' - восстановление пароля')
+                       ->message(
+                            '<p>Здравствуйте, '.$user['name'].'!</p>'.
+                            '<p>Для смены пароля на сайте '.$host.' перейдите по ссылке:</p>'.
+                            '<p><a href="'.$link.'"><b>Задать новый пароль</b></a></p>'.
+                            '<p>Ссылка действительна 24 часа.</p>'.
+                            '<p>Если вы не запрашивали восстановление пароля, просто проигнорируйте это письмо.</p>'
+                        )
+                       ->send();
             }
         }
         return array('form' => $form);

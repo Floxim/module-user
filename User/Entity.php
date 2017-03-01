@@ -35,11 +35,14 @@ class Entity extends \Floxim\Main\Content\Entity
         if (!$user || !$user['password'] || crypt($password, $user['password']) !== $user['password']) {
             return false;
         }
-        // manually replace all fields by real user's fields
-        $this->data = array();
-        $this->modified = array();
-        foreach ($user->get() as $f => $v) {
-            $this->data[$f] = $v;
+        //fx::log($this, $user);
+        if ($user !== $this) {
+            // manually replace all fields by real user's fields
+            $this->data = array();
+            $this->modified = array();
+            foreach ($user->get() as $f => $v) {
+                $this->data[$f] = $v;
+            }
         }
         $this->createSession($remember);
         fx::env()->set('user', $this);
