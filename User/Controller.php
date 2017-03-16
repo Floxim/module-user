@@ -68,7 +68,7 @@ class Controller extends \Floxim\Main\Content\Controller
         );
     }
     
-    protected static function getFullRecoverUrl()
+    public static function getFullRecoverUrl()
     {
         $recover_url = fx::config('user.recover_url');
         if (!$recover_url) {
@@ -192,11 +192,12 @@ class Controller extends \Floxim\Main\Content\Controller
         //$form = new \Floxim\Form\Form();
         $form = fx::data('floxim.form.form')->generate();
         $form = $this->ajaxForm($form);
+        $c_email = $this->getParam('email', fx::input('session', 'email'));
         $form->addFields(array(
             'email'  => array(
                 'label'      => 'E-mail',
-                'validators' => 'email -l',
-                'value'      => $this->getParam('email')
+                'validators' => 'email',
+                'value'      => $c_email
             ),
             'submit' => array(
                 'type'  => 'submit',
@@ -208,7 +209,8 @@ class Controller extends \Floxim\Main\Content\Controller
                 'и мы вышлем на него ссылку для установки нового пароля!</p>',
             'before'
         );
-        if ($form->isSent()) {
+        
+        if ($form->isSent() && !$form->hasErrors()) {
             
             $user = fx::data('floxim.user.user')->getByLogin($form->email);
             if (!$user) {
