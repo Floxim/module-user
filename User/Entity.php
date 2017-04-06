@@ -23,9 +23,18 @@ class Entity extends \Floxim\Main\Content\Entity
         return $user;
     }
     
+    
+    protected $session = null;
+    
     public function getSession()
     {
-        return fx::data('session')->load();
+        if (is_null($this->session)) {
+            $this->session = fx::data('session')->load();
+            if (!$this->session) {
+                $this->session = fx::data('session')->start([], false);
+            }
+        }
+        return $this->session;
     }
 
     public function login($login, $password, $remember = true)
